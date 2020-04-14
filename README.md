@@ -23,7 +23,7 @@ Use Naver Sentiment Movie Corpus (https://github.com/e9t/nsmc) and Azure ML to c
 ## Installation and Usage
 
 ```bash
-git clone https://github.com/dem108/sentiment-score-korean
+git clone https://github.com/AIDemoWarriors/sentiment-score-korean
 ```
 
 Enjoy!

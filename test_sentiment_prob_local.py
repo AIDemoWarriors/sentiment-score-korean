@@ -31,8 +31,17 @@ def init():
 @input_schema('data', PandasParameterType(input_sample))
 def run(data):
     try:
-        result = model.predict(data)
-        return json.dumps({"result": result.tolist()})
+        ## get probability and class for positive sentiment
+        THRESHOLD = 0.5
+        result = model.predict_proba(data)
+        result_df = pd.DataFrame(result)
+        result_df.columns = ['neg', 'pos']
+        result_df['predicted'] = result_df['pos'] > THRESHOLD
+        result_df = result_df.astype({'predicted': int})
+        result_df = result_df.astype({'predicted': str})
+        result_df = pd.concat([data, result_df[['pos','predicted']]], axis=1)
+
+        return json.dumps({"result": result_df.values.tolist()})
     except Exception as e:
         result = str(e)
         return json.dumps({"error": result})
@@ -40,6 +49,14 @@ def run(data):
 if __name__=='__main__':
     init()
     result = run(input_sample)
-    print(input_sample)
-    print(result)
+    # print(input_sample)
+    # print(result)
 
+    # input_sample['predicted'] = list(json.loads(result).values())[0]
+    # input_sample['prob'] = list(json.loads(result).values())[0]
+    # print(input_sample)
+
+    print(json.loads(result).values())
+    with open('./output.json','w') as f:
+        f.write(result)
+    ## Remember to open the output with proper encoding (for example UTF-8)
